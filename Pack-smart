@@ -1,0 +1,278 @@
+#!/usr/bin/env python3
+"""Pack Smart: desktop app (tkinter). Needs pack_smart.py in the same folder.
+
+Run:  python pack_smart_app.py
+"""
+import random
+import tkinter as tk
+from tkinter import ttk
+
+from pack_smart import (ALGOS, DEPOT, MAX_CAP, SAMPLE, Item, dist, pickup_trip,
+                        read_int, run, validate_item)
+
+SCALE = 64                      # pixels per km on the map (10 km x 7 km)
+ORANGE, GREY = "#c2410c", "#9a8f85"
+
+
+class App(tk.Tk):
+    def __init__(self):
+        super().__init__()
+        self.title("Pack Smart: Knapsack Explorer")
+        self.geometry("1100x700")
+        self.minsize(900, 600)
+        self.items = [Item(n, w, v) for n, w, v in SAMPLE]
+        self.cap = 15
+        self.results = {}
+        self.drag = None
+        self.build()
+        self.refresh()
+
+    # ------------------------------------------------------------ layout
+    def build(self):
+        left = ttk.Frame(self, padding=10)
+        left.pack(side="left", fill="y")
+        right = ttk.Frame(self, padding=(0, 10, 10, 10))
+        right.pack(side="left", fill="both", expand=True)
+
+        ttk.Label(left, text="Pack Smart", font=("Georgia", 22, "bold")).pack(anchor="w")
+        ttk.Label(left, wraplength=300, justify="left", text=(
+            "Problem: pick items that fit the bag and give the highest value (0/1 knapsack).\n"
+            "Why: loading vans, budgets, project choice.\n"
+            "Computes: chosen items, weight, value, pickup distance, work done.")).pack(anchor="w", pady=(2, 10))
+
+        capf = ttk.Frame(left); capf.pack(fill="x")
+        ttk.Label(capf, text="Bag capacity (1-1000):").pack(side="left")
+        self.cap_var = tk.StringVar(value=str(self.cap))
+        e = ttk.Entry(capf, textvariable=self.cap_var, width=8)
+        e.pack(side="left", padx=6)
+        e.bind("<Return>", lambda _e: self.set_cap())
+        e.bind("<FocusOut>", lambda _e: self.set_cap())
+
+        form = ttk.LabelFrame(left, text="Add item", padding=8)
+        form.pack(fill="x", pady=10)
+        self.name_v, self.w_v, self.v_v = tk.StringVar(), tk.StringVar(), tk.StringVar()
+        for r, (lab, var) in enumerate([("Name", self.name_v), ("Weight", self.w_v), ("Value", self.v_v)]):
+            ttk.Label(form, text=lab).grid(row=r, column=0, sticky="w", pady=2)
+            ent = ttk.Entry(form, textvariable=var, width=22)
+            ent.grid(row=r, column=1, pady=2, padx=6)
+            ent.bind("<Return>", lambda _e: self.add_item())
+        ttk.Button(form, text="Add item", command=self.add_item).grid(row=3, column=0, columnspan=2, sticky="ew", pady=(6, 0))
+
+        self.err = tk.StringVar()
+        ttk.Label(left, textvariable=self.err, foreground="#b91c1c", wraplength=300).pack(anchor="w")
+
+        cols = ("name", "w", "v", "km")
+        self.tree = ttk.Treeview(left, columns=cols, show="headings", height=12)
+        for c, t, wd in zip(cols, ("Item", "Weight", "Value", "km from depot"), (110, 55, 50, 90)):
+            self.tree.heading(c, text=t)
+            self.tree.column(c, width=wd, anchor="w")
+        self.tree.pack(fill="x", pady=6)
+        row = ttk.Frame(left); row.pack(fill="x")
+        for t, cmd in [("Remove selected", self.remove), ("Sample", self.sample),
+                       ("Random 8", self.random8), ("Clear", self.clear)]:
+            ttk.Button(row, text=t, command=cmd).pack(side="left", padx=2)
+        ttk.Label(left, foreground="#7a6b5d", wraplength=300, text=(
+            "Weights and values: whole numbers 1-999. Up to 15 items. Names must be unique.")).pack(anchor="w", pady=6)
+
+        self.nb = ttk.Notebook(right)
+        self.nb.pack(fill="both", expand=True)
+        self.texts = {}
+        for key, (name, *_rest) in ALGOS.items():
+            fr = ttk.Frame(self.nb)
+            t = tk.Text(fr, wrap="word", font=("Segoe UI", 11), padx=12, pady=10, relief="flat")
+            t.pack(fill="both", expand=True)
+            t.tag_configure("h", font=("Georgia", 16, "bold"))
+            t.tag_configure("b", font=("Segoe UI", 11, "bold"))
+            t.tag_configure("big", font=("Georgia", 24, "bold"), foreground=ORANGE)
+            t.tag_configure("ok", foreground="#15803d")
+            t.tag_configure("bad", foreground="#b91c1c")
+            self.nb.add(fr, text=name)
+            self.texts[key] = t
+
+        mapf = ttk.Frame(self.nb)
+        top = ttk.Frame(mapf); top.pack(fill="x", padx=8, pady=6)
+        ttk.Label(top, text="Show packing from:").pack(side="left")
+        self.map_algo = tk.StringVar(value=ALGOS["5"][0])
+        cb = ttk.Combobox(top, textvariable=self.map_algo, state="readonly",
+                          values=[a[0] for a in ALGOS.values()], width=24)
+        cb.pack(side="left", padx=6)
+        cb.bind("<<ComboboxSelected>>", lambda _e: self.draw_map())
+        self.map_info = tk.StringVar()
+        ttk.Label(top, textvariable=self.map_info, font=("Segoe UI", 10, "bold")).pack(side="left", padx=10)
+        self.canvas = tk.Canvas(mapf, width=640, height=448, bg="#f3eee6", highlightthickness=1)
+        self.canvas.pack(padx=8, pady=4)
+        ttk.Label(mapf, text="Drag any pin to move it. Orange = packed, grey = left behind, D = depot.").pack()
+        self.canvas.bind("<ButtonPress-1>", self.press)
+        self.canvas.bind("<B1-Motion>", self.motion)
+        self.canvas.bind("<ButtonRelease-1>", self.release)
+        self.nb.add(mapf, text="Map")
+
+        cmpf = ttk.Frame(self.nb, padding=10)
+        cc = ("a", "t", "s", "v", "w", "km", "work", "ms")
+        self.cmp = ttk.Treeview(cmpf, columns=cc, show="headings", height=7)
+        for c, t, wd in zip(cc, ("Approach", "Time", "Space", "Value", "Weight", "Trip km", "Work done", "Run ms"),
+                            (150, 110, 100, 70, 70, 70, 230, 70)):
+            self.cmp.heading(c, text=t)
+            self.cmp.column(c, width=wd, anchor="w")
+        self.cmp.pack(fill="x")
+        self.cmp_note = ttk.Label(cmpf, text="", wraplength=700)
+        self.cmp_note.pack(anchor="w", pady=8)
+        self.nb.add(cmpf, text="Compare")
+
+    # ------------------------------------------------------------ actions
+    def add_item(self):
+        it, err = validate_item(self.items, self.name_v.get(), self.w_v.get(), self.v_v.get())
+        if err:
+            self.err.set(err)
+            return
+        self.items.append(it)
+        for v in (self.name_v, self.w_v, self.v_v):
+            v.set("")
+        self.refresh()
+
+    def set_cap(self):
+        n, err = read_int(self.cap_var.get(), 1, MAX_CAP, "Capacity")
+        if err:
+            self.cap_var.set(str(self.cap))
+            self.err.set(err)
+            return
+        if n != self.cap:
+            self.cap = n
+            self.refresh()
+
+    def remove(self):
+        sel = self.tree.selection()
+        if sel:
+            del self.items[self.tree.index(sel[0])]
+            self.refresh()
+
+    def sample(self):
+        self.items = [Item(n, w, v) for n, w, v in SAMPLE]
+        self.cap = 15
+        self.cap_var.set("15")
+        self.refresh()
+
+    def random8(self):
+        names = ["Tent", "Stove", "Lamp", "Rope", "Radio", "Map", "Pot", "Boots"]
+        self.items = [Item(n, random.randint(1, 9), random.randint(1, 20)) for n in names]
+        self.cap = 20
+        self.cap_var.set("20")
+        self.refresh()
+
+    def clear(self):
+        self.items = []
+        self.refresh()
+
+    # ------------------------------------------------------------ refresh
+    def refresh(self):
+        self.err.set("")
+        self.tree.delete(*self.tree.get_children())
+        for it in self.items:
+            self.tree.insert("", "end", values=(it.name, it.weight, it.value,
+                                                f"{dist(DEPOT, (it.x, it.y)):.1f}"))
+        self.cmp.delete(*self.cmp.get_children())
+        for t in self.texts.values():
+            t.config(state="normal"); t.delete("1.0", "end")
+        if not self.items:
+            self.results = {}
+            for t in self.texts.values():
+                t.insert("end", "Add at least one item to see results.")
+                t.config(state="disabled")
+            self.draw_map()
+            return
+        self.results = {k: run(k, self.items, self.cap) for k in ALGOS}
+        best = max(r["v"] for r in self.results.values())
+        for k, r in self.results.items():
+            self.fill_tab(k, r, best)
+        for k, r in self.results.items():
+            km = pickup_trip(self.items, r["ids"])[1]
+            self.cmp.insert("", "end", values=(r["name"], r["time"], r["space"],
+                            f"{r['v']}{' *' if r['v'] == best else ''}", f"{r['w']}/{self.cap}",
+                            f"{km:.2f}", r["work"], f"{r['ms']:.3f}"))
+        self.cmp_note.config(text="* = best value. The four exact methods always agree; greedy may fall short.")
+        self.draw_map()
+
+    def fill_tab(self, k, r, best):
+        t = self.texts[k]
+        t.insert("end", r["name"] + "\n", "h")
+        t.insert("end", f"Time: {r['time']}    Space: {r['space']}    "
+                        f"{'Always optimal' if r['exact'] else 'Not always optimal'}\n\n")
+        t.insert("end", "How it works\n", "b")
+        for i, s in enumerate(r["steps"], 1):
+            t.insert("end", f"  {i}. {s}\n")
+        t.insert("end", "\nResult for your items\n", "b")
+        t.insert("end", f"Value {r['v']}\n", "big")
+        t.insert("end", f"Weight used: {r['w']} of {self.cap}\n")
+        for i in r["ids"]:
+            it = self.items[i]
+            t.insert("end", f"  - {it.name} (weight {it.weight}, value {it.value})\n")
+        if r["v"] == best:
+            t.insert("end", "Matches the best value found.\n", "ok")
+        else:
+            t.insert("end", f"{best - r['v']} short of the best ({best}).\n", "bad")
+        order, km = pickup_trip(self.items, r["ids"])
+        if order:
+            route = " -> ".join(["Depot"] + [self.items[i].name for i in order] + ["Depot"])
+            t.insert("end", f"\nPickup trip: {km:.2f} km\n{route}\n")
+        t.insert("end", f"\nWork done: {r['work']}.  Run time: {r['ms']:.3f} ms.\n")
+        t.config(state="disabled")
+
+    # ------------------------------------------------------------ map
+    def current_result(self):
+        for r in self.results.values():
+            if r["name"] == self.map_algo.get():
+                return r
+        return None
+
+    def draw_map(self):
+        c = self.canvas
+        c.delete("all")
+        for i in range(11):
+            c.create_line(i * SCALE, 0, i * SCALE, 448, fill="#e6dccf")
+        for i in range(8):
+            c.create_line(0, i * SCALE, 640, i * SCALE, fill="#e6dccf")
+        c.create_text(590, 436, text="1 square = 1 km", font=("Segoe UI", 8))
+        r = self.current_result()
+        ids = set(r["ids"]) if r else set()
+        if r:
+            order, km = pickup_trip(self.items, r["ids"])
+            path = [DEPOT] + [(self.items[i].x, self.items[i].y) for i in order] + ([DEPOT] if order else [])
+            for a, b in zip(path, path[1:]):
+                c.create_line(a[0] * SCALE, a[1] * SCALE, b[0] * SCALE, b[1] * SCALE, fill=ORANGE, width=3)
+                c.create_text((a[0] + b[0]) / 2 * SCALE, (a[1] + b[1]) / 2 * SCALE - 8,
+                              text=f"{dist(a, b):.1f} km", font=("Segoe UI", 8, "bold"))
+            self.map_info.set(f"Pickup trip: {km:.2f} km" if order else "Nothing packed, no trip needed.")
+        else:
+            self.map_info.set("")
+        for i, it in enumerate(self.items):
+            x, y = it.x * SCALE, it.y * SCALE
+            c.create_oval(x - 14, y - 14, x + 14, y + 14, fill=ORANGE if i in ids else GREY, outline="")
+            c.create_text(x, y, text=str(i + 1), fill="white", font=("Segoe UI", 10, "bold"))
+            c.create_text(x, y + 25, text=it.name, font=("Segoe UI", 8))
+        dx, dy = DEPOT[0] * SCALE, DEPOT[1] * SCALE
+        c.create_rectangle(dx - 14, dy - 14, dx + 14, dy + 14, fill="#2b2118", outline="")
+        c.create_text(dx, dy, text="D", fill="white", font=("Segoe UI", 10, "bold"))
+
+    def press(self, e):
+        self.drag = None
+        for i, it in enumerate(self.items):
+            if (e.x - it.x * SCALE) ** 2 + (e.y - it.y * SCALE) ** 2 <= 18 ** 2:
+                self.drag = i
+                break
+
+    def motion(self, e):
+        if self.drag is None:
+            return
+        it = self.items[self.drag]
+        it.x = max(0.3, min(9.7, e.x / SCALE))
+        it.y = max(0.3, min(6.7, e.y / SCALE))
+        self.draw_map()
+
+    def release(self, _e):
+        if self.drag is not None:
+            self.drag = None
+            self.refresh()
+
+
+if __name__ == "__main__":
+    App().mainloop()
