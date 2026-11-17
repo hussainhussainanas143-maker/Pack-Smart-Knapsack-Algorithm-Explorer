@@ -1,181 +1,190 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Pack Smart: Knapsack Algorithm Explorer</title>
+<title>Pack Smart — Knapsack Algorithm Explorer</title>
 <style>
-:root{--bg:#faf7f2;--sf:#fff;--sf2:#f3eee6;--ink:#2b2118;--mu:#7a6b5d;--ln:#e6dccf;--ac:#c2410c;--ok:#15803d;--er:#b91c1c;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17120e;--sf:#221b15;--sf2:#2c241c;--ink:#f4ece3;--mu:#b3a595;--ln:#3a3026;--ac:#fb923c;--ok:#4ade80;--er:#f87171}}
-:root[data-theme="dark"]{--bg:#17120e;--sf:#221b15;--sf2:#2c241c;--ink:#f4ece3;--mu:#b3a595;--ln:#3a3026;--ac:#fb923c;--ok:#4ade80;--er:#f87171}
+:root{--bg:#f6f5f1;--sf:#fff;--sf2:#eef0ec;--ink:#1c2a22;--mu:#5f6d65;--ln:#e3e6e0;--g:#216e4e;--gl:#e6f1ea;--or:#b4410f;--er:#b91c1c;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1a14;--sf:#17261d;--sf2:#1e3026;--ink:#eaf2ec;--mu:#9db3a5;--ln:#2b4034;--g:#5fc08e;--gl:#1c3428;--or:#ff9a62;--er:#f87171}}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Georgia,"Iowan Old Style",serif}
-main{max-width:980px;margin:0 auto;padding:22px 16px 48px}
-h1{font-size:clamp(32px,6vw,52px);line-height:1;margin:6px 0 8px;letter-spacing:-1px}
-h2{font-size:19px;margin:0 0 8px}
-.sub{color:var(--mu);max-width:58ch;margin:0 0 20px}
-.three{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-bottom:18px}
-.card{background:var(--sf);border:1px solid var(--ln);border-radius:12px;padding:16px;margin-bottom:16px}
-.three .card{margin:0}
-.three b{color:var(--ac);display:block;margin-bottom:3px}
-label{font:600 13px system-ui,sans-serif;color:var(--mu);display:block}
-input{font:15px system-ui,sans-serif;color:var(--ink);background:var(--bg);border:1px solid var(--ln);border-radius:8px;padding:8px 10px;width:100%}
-button{font:600 14px system-ui,sans-serif;cursor:pointer;border:1px solid var(--ln);background:var(--sf2);color:var(--ink);border-radius:8px;padding:9px 14px}
-button.p{background:var(--ac);border-color:var(--ac);color:#fff}
-:focus-visible{outline:3px solid var(--ac);outline-offset:2px}
-.row{display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:10px;align-items:end}
-@media (max-width:560px){.row{grid-template-columns:1fr 1fr}.row button{grid-column:1/-1}}
-.cap{max-width:220px;margin-bottom:12px}
-#err{color:var(--er);font:600 14px system-ui,sans-serif;min-height:22px;margin-top:8px}
-.tw{overflow-x:auto}table{border-collapse:collapse;width:100%;font:14px system-ui,sans-serif}
-th,td{padding:7px 8px;border-bottom:1px solid var(--ln);text-align:left;white-space:nowrap}
-td button{padding:3px 9px}
-.acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
-#tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
-#tabs button[aria-selected=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
-.pills{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
-.pills span{background:var(--sf2);border:1px solid var(--ln);border-radius:20px;padding:2px 12px;font:600 13px system-ui,sans-serif}
-ol{padding-left:22px;margin:6px 0}
-.res{background:var(--sf2);border-radius:10px;padding:14px;margin-top:12px}
-.big{font-size:38px;font-weight:700;color:var(--ac);line-height:1.1}
-.bag{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
-.bag i{font:600 13px system-ui,sans-serif;font-style:normal;background:var(--sf);border:1px solid var(--ln);border-radius:6px;padding:3px 9px}
-.meter{height:12px;background:var(--sf);border:1px solid var(--ln);border-radius:6px;overflow:hidden;margin:6px 0}
-.meter i{display:block;height:100%;background:var(--ac)}
-.ok{color:var(--ok);font-weight:700}.bad{color:var(--er);font-weight:700}
-.hint{color:var(--mu);font:13.5px system-ui,sans-serif}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "Segoe UI",system-ui,sans-serif}
+.w{max-width:1180px;margin:0 auto;padding:22px 16px 48px}
+header{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.logo{font-weight:900;font-size:26px;letter-spacing:-1px}.logo span{color:var(--g)}
+.pill{background:var(--gl);color:var(--g);font-weight:800;font-size:13px;letter-spacing:.5px;padding:10px 18px;border-radius:30px}
+.hero{text-align:center;padding:34px 0 22px}
+.eye{color:var(--g);font-weight:800;font-size:13px;letter-spacing:2.5px}
+h1{font-size:clamp(40px,9vw,84px);line-height:1;letter-spacing:-3px;margin:14px 0}h1 span{color:var(--g)}
+.hero p{max-width:620px;margin:0 auto;color:var(--mu);font-size:19px}
+.about{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px;margin:8px 0 18px}
+.about div{background:var(--sf);border:1px solid var(--ln);border-radius:16px;padding:14px 16px;color:var(--mu);font-size:14.5px}
+.about b{display:block;color:var(--ink);margin-bottom:2px}
+.main{display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:900px){.main{grid-template-columns:minmax(0,1fr)}}
+.card{background:var(--sf);border:1px solid var(--ln);border-radius:24px;padding:22px;margin-bottom:18px}
+h2{font-size:21px;margin:0}.sub{color:var(--mu);margin:2px 0 14px}
+.hd{display:flex;justify-content:space-between;align-items:center}
+label{display:block;font-weight:700;font-size:14px;margin:12px 0 5px}
+input{width:100%;font:inherit;font-weight:600;color:var(--ink);background:var(--sf);border:1.5px solid var(--ln);border-radius:12px;padding:12px 14px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+button{font:inherit;font-weight:700;cursor:pointer;border:0;border-radius:12px;padding:10px 14px;color:var(--ink);background:var(--sf2)}
+.add{width:100%;background:var(--g);color:#fff;font-size:17px;padding:14px;margin-top:16px}
+:root:not(.x) .add{color:#fff}
+.q{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:18px}.q button{padding:16px 6px}
+.q .c{background:#fbe9e5;color:#b3341d}
+#err{color:var(--er);font-weight:700;min-height:22px;margin-top:10px;font-size:14px}
+#list{max-height:300px;overflow:auto;margin-top:6px}
+.it{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--ln);padding:12px 2px}
+.it b{display:block;font-size:18px}.it small{color:var(--mu)}
+.it button{background:none;color:var(--or);font-size:20px;padding:4px 10px}
+.note{color:var(--mu);font-size:14px}
+.best{background:var(--gl);border-radius:16px;padding:14px 24px;text-align:center;color:var(--g)}
+.best b{display:block;font-size:30px;line-height:1.1}.best span{color:var(--mu);font-size:13px;letter-spacing:1.5px}
+.cards{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:8px 0 12px}
+@media (max-width:820px){.cards{grid-template-columns:repeat(2,1fr)}}
+.ac{text-align:left;background:var(--sf);border:2px solid var(--ln);border-radius:18px;padding:16px;min-height:150px;display:flex;flex-direction:column;justify-content:space-between;transition:.15s}
+.ac.ex{background:var(--gl);border-color:#8fc4a6}
+.ac:hover{transform:translateY(-2px)}
+.ac[aria-pressed=true]{outline:3px solid var(--g);outline-offset:2px}
+.ac h3{margin:0;font-size:16px}.ac .v{font-size:30px;font-weight:900;margin:8px 0 0}.ac small{color:var(--mu)}
+.ok{color:var(--g);font-weight:800;font-size:13px}.hu{color:var(--or);font-weight:800;font-size:13px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.chips span{background:var(--sf2);border-radius:20px;padding:3px 13px;font-weight:700;font-size:13.5px}
+ol{padding-left:22px}li{margin:4px 0}
+.det{background:var(--gl);border-radius:18px;padding:18px 20px}
+.det .big{font-size:40px;font-weight:900;color:var(--g);line-height:1.1}
+.bag{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}.bag i{font-style:normal;font-weight:700;font-size:13.5px;background:var(--sf);border-radius:8px;padding:3px 10px}
+.meter{height:12px;background:var(--sf);border-radius:6px;overflow:hidden}.meter i{display:block;height:100%;background:var(--g)}
+.tw{overflow-x:auto}table{width:100%;border-collapse:collapse}
+th{font-size:12.5px;letter-spacing:1.5px;color:var(--mu);text-align:left;padding:12px 8px;border-bottom:2px solid var(--ln)}
+td{padding:12px 8px;border-bottom:1px solid var(--ln);white-space:nowrap}
+tr.r{cursor:pointer}tr.r:hover td,tr.r.s td{background:var(--gl)}
+.mp{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:20px;align-items:center}
+@media (max-width:820px){.mp{grid-template-columns:1fr}}
+#map{width:100%;height:auto;display:block;background:var(--bg);border-radius:16px;touch-action:none}
+.nd{cursor:grab}.t{font:600 11px sans-serif;fill:var(--ink);text-anchor:middle;paint-order:stroke;stroke:var(--bg);stroke-width:3px;pointer-events:none}
+.n{font:700 12px sans-serif;fill:#fff;text-anchor:middle;pointer-events:none}
+.km{font-size:40px;font-weight:900;color:var(--g)}
+:focus-visible{outline:3px solid var(--g);outline-offset:2px}
 .off{display:none}
-#map{width:100%;height:auto;display:block;border:1px solid var(--ln);border-radius:10px;background:var(--sf2);touch-action:none}
-.nd{cursor:grab}
-.mt{font:600 11px system-ui,sans-serif;fill:var(--ink);text-anchor:middle;paint-order:stroke;stroke:var(--sf2);stroke-width:3px;pointer-events:none}
-.mn{font:700 12px system-ui,sans-serif;fill:#fff;text-anchor:middle;pointer-events:none}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.tabs button{background:var(--sf);border:1.5px solid var(--ln);font-size:14px;padding:8px 14px;border-radius:20px}
+.tabs button[aria-selected=true]{background:var(--g);border-color:var(--g);color:#fff}
+.bd{display:inline-block;font-weight:800;font-size:12.5px;border-radius:14px;padding:2px 11px}
+.bd.t{background:var(--g);color:#fff}.bd.n{background:#f3d9d3;color:#9a2f16}
+.wy{background:var(--sf);border-radius:12px;margin-top:8px}.wy td{white-space:normal;vertical-align:top;font-size:14.5px}.wy th{background:none}
+.matter{background:var(--sf);border:1px solid var(--ln);border-radius:24px;padding:22px;margin:0 0 18px}
+.matter ul{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;list-style:none;padding:0;margin:12px 0 0}
+.matter li{background:var(--gl);border-radius:14px;padding:12px 14px;margin:0}.matter li b{display:block;color:var(--g)}
 </style></head>
-<body><main>
-<h1>Pack Smart</h1>
-<p class="sub">You have a bag with a weight limit and a pile of items. Which ones should go in? Enter your own items and compare five ways to decide, then see the pickup trip for the packed items on a map.</p>
-<section class="three" aria-label="About">
-<div class="card"><b>The problem</b>The 0/1 Knapsack Problem: each item has a weight and a value. Pick a set whose total weight fits the limit and whose total value is as high as possible. Each item is taken whole or not at all.</div>
-<div class="card"><b>Why it matters</b>Loading delivery vans, choosing ads for a budget, picking projects for limited hours, cutting cargo for a flight: any “best use of limited space” is a knapsack.</div>
-<div class="card"><b>What the program computes</b>For your items and limit: the chosen items, total weight, total value, and how much work each algorithm did, checked against the best value found.</div>
-</section>
-
-<section class="card">
-<h2>Your items</h2>
-<div class="cap"><label for="cap">Bag capacity (weight)</label><input id="cap" type="text" inputmode="numeric" value="15"></div>
-<form id="f" class="row" novalidate>
-<div><label for="n">Item name</label><input id="n" type="text" maxlength="20" placeholder="e.g. Laptop"></div>
-<div><label for="w">Weight</label><input id="w" type="text" inputmode="numeric" placeholder="e.g. 4"></div>
-<div><label for="v">Value</label><input id="v" type="text" inputmode="numeric" placeholder="e.g. 10"></div>
-<button class="p" type="submit">Add item</button>
-</form>
+<body><div class="w">
+<header><div class="logo">PACK <span>SMART</span></div><div class="pill">KNAPSACK ALGORITHM EXPLORER</div></header>
+<section class="hero"><div class="eye">A SMALL PROBLEM WITH BIG IDEAS</div><h1>Make every kilo <span>count.</span></h1><p>Choose what to pack, set your weight limit, and see five classic algorithms fight for the best bag.</p></section>
+<section class="about"><div><b>The problem</b>0/1 knapsack: each item has a weight and a value. Pick items that fit the limit and give the highest total value.</div><div><b>Why it matters</b>Loading delivery vans, budgeting ads, picking projects, planning cargo: all “best use of limited space”.</div><div><b>What it computes</b>Chosen items, weight, value, work done per algorithm and the pickup trip distance on a map.</div></section>
+<section class="matter"><h2>Why it matters in real life</h2><p class="sub" style="margin-bottom:0">Every time something valuable has to fit into limited space, weight or budget, someone is solving a knapsack problem. Better answers mean less waste, lower cost and more value from the same resources.</p>
+<ul><li><b>Delivery vans and cargo</b>Choose which parcels to load so the van carries the most value without going over its weight limit.</li><li><b>Budgets and ads</b>Pick the campaigns or purchases that give the biggest return for a fixed budget.</li><li><b>Projects and time</b>Decide which tasks fit into a limited number of working hours with the highest payoff.</li><li><b>Travel and backpacking</b>Pack the most useful gear under an airline or hiking weight limit.</li></ul></section>
+<div class="main">
+<div><section class="card">
+<div class="hd"><h2>Your packing list</h2><span class="note" id="cnt"></span></div>
+<label for="cap">Bag capacity (weight)</label><input id="cap" inputmode="numeric" value="15">
+<form id="f" novalidate>
+<label for="n">Item name</label><input id="n" maxlength="20" placeholder="e.g. Sleeping bag">
+<div class="two"><div><label for="w">Weight</label><input id="w" inputmode="numeric" placeholder="4"></div><div><label for="v">Value</label><input id="v" inputmode="numeric" placeholder="10"></div></div>
+<button class="add" type="submit">+ Add item</button></form>
 <div id="err" role="alert"></div>
-<div class="tw" id="list"></div>
-<div class="acts"><button id="s1">Load sample</button><button id="s2">Random 8 items</button><button id="s3">Clear all</button></div>
-<p class="hint">Weights and values are whole numbers from 1 to 999. Capacity is a whole number from 1 to 1000. Up to 15 items.</p>
-</section>
-
-<section class="card res-s off" id="out">
-<div id="tabs" role="tablist" aria-label="Algorithms"></div>
-<div id="info"></div>
-</section>
-<section class="card res-s off" id="mapc"><h2>Pickup map</h2><p class="hint">Each item sits somewhere on a 10 km × 7 km map. The depot (D) must drive to every <b>packed</b> item and back. Orange pins are in the bag, grey pins are left behind. Drag any pin to move it and watch the distance change.</p><svg id="map" viewBox="0 0 640 448" role="img" aria-label="Map of items and pickup route"></svg><p id="mapinfo" style="font-weight:700"></p></section>
-<section class="card res-s off" id="cmpc"><h2>Who found the best value?</h2><div class="tw" id="cmp"></div></section>
-</main>
+<div class="q"><button id="s1">Load sample</button><button id="s2">Random items</button><button id="s3" class="c">Clear</button></div>
+<div id="list"></div>
+<p class="note">Weight and value: whole numbers 1–999. Capacity 1–1000. Up to 15 items. Names must be unique. Item locations are randomized for the pickup map.</p>
+</section></div>
+<div>
+<section class="card" id="show"><div class="hd"><div><h2>Algorithm showdown</h2><p class="sub">Click an algorithm to see how it works and what it chose.</p></div><div class="best"><b id="bv">0</b><span>BEST VALUE</span></div></div>
+<div class="cards" id="cards"></div><p class="note" id="nt">The four exact methods should agree. Greedy is fast, but can miss the best combination.</p>
+<div class="det" id="det"></div></section>
+<section class="card" id="glance"><h2>Results at a glance</h2><p class="sub">Selected items and work performed by each method</p><div class="tw" id="tb"></div></section>
+<section class="card" id="route"><h2>Pickup route</h2><p class="sub" id="rs"></p><div class="mp"><svg id="map" viewBox="0 0 640 448" role="img" aria-label="Pickup route map"></svg><div><div class="km" id="kmv"></div><p class="sub">Round trip from the depot to packed items. Drag a pin to move it.</p><b id="rt"></b></div></div></section>
+</div></div></div>
 <script>
 (function(){"use strict";
-var $=function(i){return document.getElementById(i)},items=[],cap=15,cur="dp",R={},MAXI=15;
-var ORD=["brute","greedy","dp","bt","dc"],DEP={x:5,y:3.5};
-function rp(){return{x:.8+Math.random()*8.4,y:.8+Math.random()*5.4}}
-function d2(a,b){return Math.hypot(a.x-b.x,a.y-b.y)}
+var $=function(i){return document.getElementById(i)},items=[],cap=15,cur="dp",R={},DEP={x:5,y:3.5},MAXI=15,S=64,ORD=["brute","greedy","dp","bt","dc"];
 var SAMPLE=[["Laptop",5,12],["Camera",3,8],["Water bottle",2,3],["Jacket",4,6],["Book",1,2],["Snacks",2,4],["Tripod",6,7],["Speaker",3,9]];
-function tot(ids){var w=0,v=0;ids.forEach(function(i){w+=items[i].w;v+=items[i].v});return{w:w,v:v}}
-function err(m){$("err").textContent=m}
 function esc(s){return s.replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
-
-function brute(){var n=items.length,best=-1,bm=0,N=1<<n;
-for(var m=0;m<N;m++){var w=0,v=0;for(var i=0;i<n;i++)if(m>>i&1){w+=items[i].w;v+=items[i].v}if(w<=cap&&v>best){best=v;bm=m}}
-var ids=[];for(var i=0;i<n;i++)if(bm>>i&1)ids.push(i);return{ids:ids,work:N+" combinations checked",note:"Every one of the 2^"+n+" = "+N+" subsets was weighed and added up."}}
-
-function order(){return items.map(function(_,i){return i}).sort(function(a,b){return items[b].v/items[b].w-items[a].v/items[a].w})}
-function greedy(){var o=order(),w=0,ids=[];o.forEach(function(i){if(w+items[i].w<=cap){w+=items[i].w;ids.push(i)}});
-return{ids:ids,work:items.length+" items considered",note:"Ranked by value per weight: "+o.map(function(i){return items[i].n+" ("+(items[i].v/items[i].w).toFixed(2)+")"}).join(", ")+"."}}
-
-function dp(){var n=items.length,W=cap,T=[],i,c;for(i=0;i<=n;i++)T.push(new Uint32Array(W+1));
-for(i=1;i<=n;i++){var it=items[i-1];for(c=0;c<=W;c++){T[i][c]=T[i-1][c];if(it.w<=c&&T[i-1][c-it.w]+it.v>T[i][c])T[i][c]=T[i-1][c-it.w]+it.v}}
-var ids=[];c=W;for(i=n;i>0;i--)if(T[i][c]!==T[i-1][c]){ids.push(i-1);c-=items[i-1].w}ids.reverse();
-return{ids:ids,work:(n*W)+" table cells filled",note:"Table has "+(n+1)+" rows (items considered) and "+(W+1)+" columns (capacity 0 to "+W+"). Bottom-right cell = "+T[n][W]+"."}}
-
-function bt(){var o=order(),n=o.length,best=0,bs=[],nodes=0,pr=0;
-function bound(k,w,v){var r=cap-w,b=v;for(var j=k;j<n;j++){var it=items[o[j]];if(it.w<=r){r-=it.w;b+=it.v}else{b+=it.v*r/it.w;break}}return b}
-function go(k,w,v,s){nodes++;if(v>best){best=v;bs=s.slice()}if(k===n)return;
-if(bound(k,w,v)<=best){pr++;return}
-var it=items[o[k]];if(w+it.w<=cap){s.push(o[k]);go(k+1,w+it.w,v+it.v,s);s.pop()}go(k+1,w,v,s)}
-go(0,0,0,[]);return{ids:bs.slice().sort(function(a,b){return a-b}),work:nodes+" nodes visited, "+pr+" branches pruned",note:"Search tried “take” before “skip” in ratio order and cut any branch whose best possible value could not beat "+best+"."}}
-
-/* 5 Divide and conquer: split items in half, solve each half, merge */
+function d2(a,b){return Math.hypot(a.x-b.x,a.y-b.y)}
+function rp(){return{x:.8+Math.random()*8.4,y:.8+Math.random()*5.4}}
+function err(m){$("err").textContent=m}
+function tot(ids){var w=0,v=0;ids.forEach(function(i){w+=items[i].w;v+=items[i].v});return{w:w,v:v}}
+function ord(){return items.map(function(_,i){return i}).sort(function(a,b){return items[b].v/items[b].w-items[a].v/items[a].w})}
+function brute(){var n=items.length,b=-1,bm=0,N=1<<n,m,i;for(m=0;m<N;m++){var w=0,v=0;for(i=0;i<n;i++)if(m>>i&1){w+=items[i].w;v+=items[i].v}if(w<=cap&&v>b){b=v;bm=m}}
+var ids=[];for(i=0;i<n;i++)if(bm>>i&1)ids.push(i);return{ids:ids,work:N+" subsets",note:"All 2^"+n+" = "+N+" subsets were weighed and added up."}}
+function greedy(){var w=0,ids=[],tr={},o=ord();o.forEach(function(i,k){var a=w,t=w+items[i].w<=cap;if(t){w+=items[i].w;ids.push(i)}tr[i]={rank:k+1,before:a,after:a+items[i].w,took:t}});return{ids:ids.sort(function(a,b){return a-b}),work:items.length+" items considered",trace:tr,note:"Ranked by value per weight: "+o.map(function(i){return items[i].n+" ("+(items[i].v/items[i].w).toFixed(2)+")"}).join(", ")+"."}}
+function dp(){var n=items.length,T=[],i,c;for(i=0;i<=n;i++)T.push(new Uint32Array(cap+1));
+for(i=1;i<=n;i++){var it=items[i-1];for(c=0;c<=cap;c++){T[i][c]=T[i-1][c];if(it.w<=c&&T[i-1][c-it.w]+it.v>T[i][c])T[i][c]=T[i-1][c-it.w]+it.v}}
+var ids=[];c=cap;for(i=n;i>0;i--)if(T[i][c]!==T[i-1][c]){ids.push(i-1);c-=items[i-1].w}return{ids:ids.reverse(),work:n*cap+" table cells",note:"Table has "+(n+1)+" rows (items considered) and "+(cap+1)+" columns (capacity 0 to "+cap+"). Bottom-right cell = "+T[n][cap]+"."}}
+function bt(){var o=ord(),n=o.length,best=0,bs=[],nodes=0,pr=0;
+function bound(k,w,v){var r=cap-w,b=v;for(var j=k;j<n;j++){var it=items[o[j]];if(it.w<=r){r-=it.w;b+=it.v}else{return b+it.v*r/it.w}}return b}
+function go(k,w,v,s){nodes++;if(v>best){best=v;bs=s.slice()}if(k===n)return;if(bound(k,w,v)<=best){pr++;return}var it=items[o[k]];if(w+it.w<=cap){s.push(o[k]);go(k+1,w+it.w,v+it.v,s);s.pop()}go(k+1,w,v,s)}
+go(0,0,0,[]);return{ids:bs.sort(function(a,b){return a-b}),work:nodes+" search nodes",note:nodes+" partial bags were visited and "+pr+" branches were pruned because their best possible value could not beat "+best+"."}}
 function dc(){var n=items.length,h=n>>1;
 function en(a,b){var o=[],N=1<<(b-a);for(var m=0;m<N;m++){var w=0,v=0;for(var i=0;i<b-a;i++)if(m>>i&1){w+=items[a+i].w;v+=items[a+i].v}o.push({w:w,v:v,m:m})}return o}
-var L=en(0,h),Rt=en(h,n),bi=0,pb=[];Rt.sort(function(a,b){return a.w-b.w});
-Rt.forEach(function(r,i){if(r.v>Rt[bi].v)bi=i;pb.push(bi)});
-var best=-1,bl=null,br=null;
-L.forEach(function(l){if(l.w>cap)return;var room=cap-l.w,lo=0,hi=Rt.length-1,pos=-1;while(lo<=hi){var mid=(lo+hi)>>1;if(Rt[mid].w<=room){pos=mid;lo=mid+1}else hi=mid-1}
+var L=en(0,h),Rt=en(h,n),bi=0,pb=[],best=-1,bl,br;Rt.sort(function(a,b){return a.w-b.w});Rt.forEach(function(r,i){if(r.v>Rt[bi].v)bi=i;pb.push(bi)});
+L.forEach(function(l){if(l.w>cap)return;var lo=0,hi=Rt.length-1,pos=-1;while(lo<=hi){var mid=(lo+hi)>>1;if(Rt[mid].w<=cap-l.w){pos=mid;lo=mid+1}else hi=mid-1}
 if(pos<0)return;var r=Rt[pb[pos]];if(l.v+r.v>best){best=l.v+r.v;bl=l;br=r}});
-var ids=[],i;for(i=0;i<h;i++)if(bl.m>>i&1)ids.push(i);for(i=0;i<n-h;i++)if(br.m>>i&1)ids.push(h+i);
-return{ids:ids,work:(L.length+Rt.length)+" half-subsets built, "+L.length+" merge lookups",note:"Split into a left half of "+h+" items and a right half of "+(n-h)+". Each half has far fewer subsets ("+L.length+" and "+Rt.length+") than all "+(1<<n)+" combinations."}}
-function drawMap(ids){var S=64,P=function(p){return[p.x*S,p.y*S]},left=ids.slice(),cu=DEP,seq=[DEP],tot=0,s='',i,k,a,b;
-while(left.length){var bi=0;for(k=1;k<left.length;k++)if(d2(cu,items[left[k]])<d2(cu,items[left[bi]]))bi=k;var nx=left.splice(bi,1)[0];tot+=d2(cu,items[nx]);cu=items[nx];seq.push(cu)}
-if(ids.length){tot+=d2(cu,DEP);seq.push(DEP)}
-for(i=0;i<=10;i++)s+='<line x1="'+i*S+'" y1="0" x2="'+i*S+'" y2="448" stroke="var(--ln)" stroke-width="1"/>';
-for(i=0;i<=7;i++)s+='<line x1="0" y1="'+i*S+'" x2="640" y2="'+i*S+'" stroke="var(--ln)" stroke-width="1"/>';
-s+='<text class="mt" x="590" y="438">1 square = 1 km</text>';
-for(i=1;i<seq.length;i++){a=P(seq[i-1]);b=P(seq[i]);s+='<line x1="'+a[0]+'" y1="'+a[1]+'" x2="'+b[0]+'" y2="'+b[1]+'" stroke="var(--ac)" stroke-width="3.5" stroke-linecap="round"/><text class="mt" x="'+(a[0]+b[0])/2+'" y="'+((a[1]+b[1])/2-6)+'">'+d2(seq[i-1],seq[i]).toFixed(1)+' km</text>'}
-items.forEach(function(t,j){var p=P(t),on=ids.indexOf(j)>=0;s+='<g class="nd" data-i="'+j+'"><circle cx="'+p[0]+'" cy="'+p[1]+'" r="14" fill="'+(on?'var(--ac)':'var(--mu)')+'" opacity="'+(on?1:.55)+'"/><text class="mn" x="'+p[0]+'" y="'+(p[1]+4)+'">'+(j+1)+'</text><text class="mt" x="'+p[0]+'" y="'+(p[1]+28)+'">'+esc(t.n)+'</text></g>'});
-a=P(DEP);s+='<rect x="'+(a[0]-14)+'" y="'+(a[1]-14)+'" width="28" height="28" rx="6" fill="var(--ink)"/><text class="mn" style="fill:var(--bg)" x="'+a[0]+'" y="'+(a[1]+4)+'">D</text>';
-$("map").innerHTML=s;$("mapinfo").textContent=ids.length?"Pickup trip for the packed items: "+tot.toFixed(2)+" km (always drive to the nearest unvisited packed item, then return to D).":"Nothing is packed, so no trip is needed."}
+var ids=[],i;for(i=0;i<h;i++)if(bl.m>>i&1)ids.push(i);for(i=0;i<n-h;i++)if(br.m>>i&1)ids.push(h+i);return{ids:ids,work:(L.length+Rt.length)+" half-subsets",note:"Left half: "+h+" items ("+L.length+" subsets). Right half: "+(n-h)+" items ("+Rt.length+" subsets). That is far fewer than all "+(1<<n)+" combinations."}}
 var A={
-dc:{l:"Divide and conquer",t:"O(2^(n/2) · n)",s:"O(2^(n/2))",opt:1,fn:dc,why:"Splits the items into two halves, solves each half on its own, then merges the answers. Exact, and far faster than brute force because each half is tiny.",st:["Divide: cut the item list into a left half and a right half.","Conquer: list every subset of each half with its weight and value (only 2^(n/2) each).","Sort the right-half subsets by weight and record the best value seen so far at each weight.","Merge: for every left subset that fits, binary-search the right subsets for the heaviest one that still fits in the leftover space, and read its best value.","Keep the left+right pair with the highest total value."]},
-brute:{l:"Brute force",t:"O(2ⁿ · n)",s:"O(n)",opt:1,fn:brute,why:"Tries every possible combination, so it is always right, but each extra item doubles the work.",st:["List every subset of items (each item is in or out, so 2ⁿ subsets).","For each subset add up the weight. If it is above the capacity, throw it away.","Otherwise add up the value and keep it if it beats the best so far.","After the last subset, return the best one."]},
-greedy:{l:"Greedy",t:"O(n log n)",s:"O(n)",opt:0,fn:greedy,why:"Fast and simple, but it never reconsiders a choice, so it can miss the best bag.",st:["Compute value ÷ weight for every item.","Sort the items from best ratio to worst.","Go down the list: if the item still fits, take it. Otherwise skip it.","Stop at the end of the list."]},
-dp:{l:"Dynamic programming",t:"O(n · W)",s:"O(n · W)",opt:1,fn:dp,why:"Always right and fast when the capacity W is moderate. It stores answers to smaller bags and reuses them.",st:["Make a table: row i = first i items, column c = capacity c. Cell = best value possible.","Row 0 and column 0 are all 0.","For each cell, choose the larger of: skip item i (copy the cell above), or take item i (value + cell above at capacity c − weight).","The bottom-right cell is the best total value.","Walk back up: if a cell differs from the one above, item i was taken."]},
-bt:{l:"Backtracking + bound",t:"O(2ⁿ) worst case",s:"O(n)",opt:1,fn:bt,why:"Searches like brute force but abandons any branch that cannot beat the best bag found so far.",st:["Sort items by value ÷ weight.","Go item by item with two choices: take it (if it fits) or skip it.","At each step estimate the best value still reachable by filling the leftover space with fractions of the remaining items.","If that estimate is not better than the best complete bag, prune the branch and go back.","When all items are decided, update the best bag if it improved."]}};
-
-function solve(){var n=items.length,ok=n>0&&cap>0;
-["out","cmpc","mapc"].forEach(function(i){$(i).classList.toggle("off",!ok)});
-if(!ok){return}
-ORD.forEach(function(k){var t=performance.now(),x=A[k].fn();x.ms=performance.now()-t;var q=tot(x.ids);x.w=q.w;x.v=q.v;R[k]=x});
-show(cur);cmp()}
+brute:{l:"Brute force",sh:"Brute force",t:"O(2ⁿ · n)",s:"O(n)",x:1,fn:brute,why:"Tries every possible combination. Always right, but each extra item doubles the work.",st:["List every subset of items (2ⁿ of them).","Add up the weight of each subset and discard those over the capacity.","Add up the value of the rest and remember the best so far.","After the last subset, return the best one."]},
+greedy:{l:"Greedy",t:"O(n log n)",s:"O(n)",x:0,fn:greedy,why:"Very fast, but it never reconsiders a choice, so it can miss the best bag.",st:["Compute value ÷ weight for every item.","Sort items from best ratio to worst.","Walk down the list and take each item if it still fits.","Stop at the end of the list."]},
+dp:{l:"Dynamic programming",t:"O(n · W)",s:"O(n · W)",x:1,fn:dp,why:"Stores answers to smaller bags and reuses them, so it is exact and fast for moderate capacity W.",st:["Build a table: row i = first i items, column c = capacity c.","Each cell = best of: skip item i, or take it (its value + the cell above at c − weight).","The bottom-right cell is the best total value.","Walk back up the table: if a cell differs from the one above, that item was taken."]},
+bt:{l:"Backtracking",tl:"Backtracking + bound",t:"O(2ⁿ) worst case",s:"O(n)",x:1,fn:bt,why:"Searches take / skip choices but prunes any branch that cannot beat the best bag found.",st:["Sort items by value ÷ weight.","Go item by item: take it (if it fits) or skip it.","Estimate the best value still reachable using fractions of the remaining items.","If the estimate cannot beat the best bag so far, prune the branch and go back.","When all items are decided, keep the best bag."]},
+dc:{l:"Divide & conquer",tl:"Divide and conquer",t:"O(2^(n/2) · n)",s:"O(2^(n/2))",x:1,fn:dc,why:"Splits the items into two halves, solves each half, then merges. Exact, with far less work than brute force.",st:["Divide: split the items into a left half and a right half.","Conquer: list every subset of each half (only 2^(n/2) each).","Sort the right subsets by weight and keep the best value so far at each weight.","Merge: for each left subset, binary-search the heaviest right subset that still fits.","Keep the pair with the highest total value."]}};
+function trip(ids){var left=ids.slice(),cu=DEP,seq=[DEP],km=0;while(left.length){var bi=0;for(var k=1;k<left.length;k++)if(d2(cu,items[left[k]])<d2(cu,items[left[bi]]))bi=k;var nx=left.splice(bi,1)[0];km+=d2(cu,items[nx]);cu=items[nx];seq.push(cu);seq[seq.length-1].i=nx}
+if(ids.length){km+=d2(cu,DEP);seq.push(DEP)}return{seq:seq,km:km}}
+function solve(){var ok=items.length>0&&cap>0;$("show").classList.toggle("off",!ok);$("glance").classList.toggle("off",!ok);$("route").classList.toggle("off",!ok);if(!ok)return;
+ORD.forEach(function(k){var t=performance.now(),x=A[k].fn();x.ms=performance.now()-t;var q=tot(x.ids);x.w=q.w;x.v=q.v;x.tr=trip(x.ids);R[k]=x});render()}
 function best(){return Math.max.apply(0,ORD.map(function(k){return R[k].v}))}
-function tabs(){$("tabs").innerHTML=ORD.map(function(k){return'<button role="tab" data-k="'+k+'" aria-selected="'+(k===cur)+'">'+A[k].l+'</button>'}).join("")}
-function show(k){cur=k;tabs();drawMap(R[k].ids);var a=A[k],x=R[k],b=best(),pct=Math.round(x.w/cap*100);
-$("info").innerHTML='<h2>'+a.l+'</h2><p>'+a.why+'</p><div class="pills"><span>Time: '+a.t+'</span><span>Space: '+a.s+'</span><span>'+(a.opt?"Always optimal":"Not always optimal")+'</span></div>'+
-'<b>How it works</b><ol>'+a.st.map(function(s){return"<li>"+s+"</li>"}).join("")+'</ol>'+
-'<div class="res"><b>Result for your items</b><div class="big">Value '+x.v+'</div>'+
-'<div class="meter" aria-label="Capacity used"><i style="width:'+pct+'%"></i></div><div class="hint">Weight used: '+x.w+' of '+cap+' ('+pct+'%)</div>'+
-'<div class="bag">'+(x.ids.length?x.ids.map(function(i){return"<i>"+esc(items[i].n)+" · w"+items[i].w+" · v"+items[i].v+"</i>"}).join(""):"<i>Nothing fits</i>")+'</div>'+
-'<p>'+(x.v===b?'<span class="ok">Matches the best value found.</span>':'<span class="bad">'+(b-x.v)+' value short of the best ('+b+').</span>')+'</p>'+
-'<p class="hint">'+x.note+'<br>Work done: '+x.work+'. Run time: '+x.ms.toFixed(2)+' ms.</p></div>'}
-function cmp(){var b=best();$("cmp").innerHTML='<table><tr><th>Approach</th><th>Time</th><th>Space</th><th>Value</th><th>Weight</th><th>Work done</th><th>Run time</th></tr>'+ORD.map(function(k){var x=R[k];return'<tr><td><button data-k="'+k+'">'+A[k].l+'</button></td><td>'+A[k].t+'</td><td>'+A[k].s+'</td><td><b>'+x.v+(x.v===b?" ★":"")+'</b></td><td>'+x.w+'/'+cap+'</td><td>'+x.work+'</td><td>'+x.ms.toFixed(2)+' ms</td></tr>'}).join("")+'</table><p class="hint">★ = best value. The four exact methods must always agree; greedy may fall short.</p>'}
-
-function list(){$("list").innerHTML=items.length?'<table><tr><th>#</th><th>Item</th><th>Weight</th><th>Value</th><th>Value/weight</th><th>Distance from depot</th><th></th></tr>'+items.map(function(t,i){return'<tr><td>'+(i+1)+'</td><td>'+esc(t.n)+'</td><td>'+t.w+'</td><td>'+t.v+'</td><td>'+(t.v/t.w).toFixed(2)+'</td><td>'+d2(DEP,t).toFixed(1)+' km</td><td><button data-d="'+i+'" aria-label="Remove '+esc(t.n)+'">Remove</button></td></tr>'}).join("")+'</table>':'<p class="hint">No items yet. Add one above or load the sample.</p>'}
+function names(x){return x.ids.map(function(i){return items[i].n}).join(", ")||"Nothing fits"}
+function kn(ex,c){var d=new Array(c+1).fill(0);items.forEach(function(it,i){if(i===ex)return;for(var j=c;j>=it.w;j--)d[j]=Math.max(d[j],d[j-it.w]+it.v)});return d[c]}
+function why(k){var x=R[k],opt=best(),on={};x.ids.forEach(function(i){on[i]=1});
+return'<div class="tw"><table class="wy"><tr><th>ITEM</th><th>W</th><th>V</th><th>V/W</th><th>DECISION</th><th>WHY</th></tr>'+items.map(function(it,i){var t=!!on[i],r,rt=(it.v/it.w).toFixed(2);
+if(k==="greedy"){var g=x.trace[i];r=t?"Ranked #"+g.rank+" by value per weight. It fits: "+g.before+" + "+it.w+" = "+g.after+" ≤ "+cap+", so greedy takes it.":"Ranked #"+g.rank+" by value per weight, but "+g.before+" + "+it.w+" = "+g.after+" is over the limit of "+cap+", so greedy skips it."}
+else if(t){var w0=kn(i,cap),d=opt-w0;r=d>0?"Needed. Without it the best possible bag is worth only "+w0+" ("+d+" less than "+opt+").":"Interchangeable: an equally good bag (value "+opt+") exists without it."}
+else if(it.w>cap)r="Heavier than the whole bag ("+it.w+" > "+cap+").";
+else{var f=it.v+kn(i,cap-it.w),d2=opt-f;r=d2>0?"Not worth it. The best bag that includes it is worth only "+f+" ("+d2+" less than "+opt+"), because it uses space better spent on other items.":"A bag with it is equally good (value "+f+"), but this method chose another equally good bag."}
+return'<tr><td><b>'+esc(it.n)+'</b></td><td>'+it.w+'</td><td>'+it.v+'</td><td>'+rt+'</td><td><span class="bd '+(t?"t":"n")+'">'+(t?"Taken":"Not taken")+'</span></td><td>'+r+'</td></tr>'}).join("")+'</table></div>'}
+function render(){var b=best();$("bv").textContent=b;
+$("cards").innerHTML=ORD.map(function(k){var a=A[k],x=R[k];return'<button class="ac'+(a.x?" ex":"")+'" data-k="'+k+'" aria-pressed="'+(k===cur)+'"><h3>'+a.l+'</h3><div><div class="v">'+x.v+'</div><small>value · '+x.w+'/'+cap+' weight</small></div><span class="'+(a.x?"ok":"hu")+'">'+(a.x?"✓ Exact":"≈ Heuristic")+'</span></button>'}).join("");
+var a=A[cur],x=R[cur],pct=Math.round(x.w/cap*100);
+$("det").innerHTML='<div class="tabs" role="tablist" aria-label="Algorithms">'+ORD.map(function(k){return'<button role="tab" data-k="'+k+'" aria-selected="'+(k===cur)+'">'+(A[k].tl||A[k].l)+'</button>'}).join("")+'</div><h2>'+(a.tl||a.l)+'</h2><p>'+a.why+'</p><div class="chips"><span>Time: '+a.t+'</span><span>Space: '+a.s+'</span><span>'+(a.x?"Always optimal":"Not always optimal")+'</span></div><b>How it works</b><ol>'+a.st.map(function(s){return"<li>"+s+"</li>"}).join("")+'</ol><b>Result for your items</b><div class="big">Value '+x.v+'</div><div class="meter"><i style="width:'+pct+'%"></i></div><p class="note" style="margin:4px 0">Weight used: '+x.w+' of '+cap+' ('+pct+'%)</p><div class="bag">'+(x.ids.length?x.ids.map(function(i){return"<i>"+esc(items[i].n)+" · w"+items[i].w+" · v"+items[i].v+"</i>"}).join(""):"<i>Nothing fits</i>")+'</div><p style="font-weight:700;color:'+(x.v===b?"var(--g)":"var(--er)")+'">'+(x.v===b?"Matches the best value found.":(b-x.v)+" short of the best ("+b+").")+'</p><p class="note">Work done: '+x.work+' · Run time: '+x.ms.toFixed(2)+' ms · Pickup trip: '+x.tr.km.toFixed(2)+' km</p>'+(x.note?'<p class="note">'+x.note+'</p>':'')+'<b>Why each item was taken or left out</b>'+why(cur);
+$("tb").innerHTML='<table><tr><th>ALGORITHM</th><th>PICKED ITEMS</th><th>WEIGHT</th><th>VALUE</th><th>WORK</th></tr>'+ORD.map(function(k){var y=R[k];return'<tr class="r'+(k===cur?" s":"")+'" data-k="'+k+'"><td><b>'+A[k].l+'</b></td><td>'+esc(names(y))+'</td><td>'+y.w+' / '+cap+'</td><td><b>'+y.v+'</b></td><td class="note">'+y.work+'</td></tr>'}).join("")+'</table>';
+drawMap()}
+function drawMap(){var x=R[cur];if(!x)return;var s='',i,a,b,sq=x.tr.seq,on={};x.ids.forEach(function(i){on[i]=1});
+for(i=0;i<=10;i++)s+='<line x1="'+(40+i*54)+'" y1="20" x2="'+(40+i*54)+'" y2="398" stroke="var(--ln)"/>';
+for(i=0;i<=7;i++)s+='<line x1="40" y1="'+(20+i*54)+'" x2="580" y2="'+(20+i*54)+'" stroke="var(--ln)"/>';
+function P(p){return[40+p.x*54,20+p.y*54]}
+s+='<text class="t" x="30" y="404">0 km</text><text class="t" x="590" y="414">10 km</text><text class="t" x="20" y="28">7 km</text>';
+for(i=1;i<sq.length;i++){a=P(sq[i-1]);b=P(sq[i]);s+='<line x1="'+a[0]+'" y1="'+a[1]+'" x2="'+b[0]+'" y2="'+b[1]+'" stroke="var(--or)" stroke-width="3" stroke-linecap="round"/><text class="t" x="'+(a[0]+b[0])/2+'" y="'+((a[1]+b[1])/2-6)+'">'+d2(sq[i-1],sq[i]).toFixed(1)+' km</text>'}
+items.forEach(function(t,j){var p=P(t);s+='<g class="nd" data-i="'+j+'"><circle cx="'+p[0]+'" cy="'+p[1]+'" r="13" fill="'+(on[j]?"var(--g)":"#9aa59e")+'" opacity="'+(on[j]?1:.6)+'"/><text class="n" x="'+p[0]+'" y="'+(p[1]+4)+'">'+(j+1)+'</text><text class="t" x="'+p[0]+'" y="'+(p[1]-18)+'">'+esc(t.n)+'</text></g>'});
+a=P(DEP);s+='<rect x="'+(a[0]-13)+'" y="'+(a[1]-13)+'" width="26" height="26" rx="5" fill="var(--ink)"/><text class="n" style="fill:var(--bg)" x="'+a[0]+'" y="'+(a[1]+4)+'">D</text>';
+$("map").innerHTML=s;$("rs").textContent="Nearest-neighbour route for the "+A[cur].l.toLowerCase()+" solution";$("kmv").textContent=x.ids.length?x.tr.km.toFixed(2)+" km":"0 km";
+$("rt").textContent=x.ids.length?["Depot"].concat(sq.slice(1,-1).map(function(p){return items[p.i].n}),["Depot"]).join(" → "):"Nothing packed, no trip needed."}
+function list(){$("cnt").textContent=items.length+"/"+MAXI+" items";$("list").innerHTML=items.map(function(t,i){return'<div class="it"><div><b>'+esc(t.n)+'</b><small>Weight '+t.w+' · Value '+t.v+'</small></div><button data-d="'+i+'" aria-label="Remove '+esc(t.n)+'">×</button></div>'}).join("")}
 function upd(){list();solve();if(!items.length)err("Add at least one item to see results.")}
 function int(s,lo,hi){s=String(s).trim();if(!/^\d+$/.test(s))return NaN;var v=Number(s);return v<lo||v>hi?NaN:v}
-
 $("f").addEventListener("submit",function(e){e.preventDefault();var nm=$("n").value.trim(),w=int($("w").value,1,999),v=int($("v").value,1,999);
-if(!nm){err("Item name cannot be empty.");$("n").focus();return}
+if(!nm){err("Item name cannot be empty.");return}
 if(items.some(function(t){return t.n.toLowerCase()===nm.toLowerCase()})){err("“"+nm+"” is already in the list. Use a different name.");return}
-if(isNaN(w)){err("Weight must be a whole number from 1 to 999.");$("w").focus();return}
-if(isNaN(v)){err("Value must be a whole number from 1 to 999.");$("v").focus();return}
-if(items.length>=MAXI){err("Maximum is "+MAXI+" items (brute force would need over 32,000 subsets).");return}
+if(isNaN(w)){err("Weight must be a whole number from 1 to 999.");return}
+if(isNaN(v)){err("Value must be a whole number from 1 to 999.");return}
+if(items.length>=MAXI){err("Maximum is "+MAXI+" items.");return}
 var q=rp();items.push({n:nm,w:w,v:v,x:q.x,y:q.y});err("");["n","w","v"].forEach(function(i){$(i).value=""});upd();$("n").focus()});
 $("cap").addEventListener("change",function(){var c=int($("cap").value,1,1000);if(isNaN(c)){$("cap").value=cap;err("Capacity must be a whole number from 1 to 1000.");return}cap=c;err("");upd()});
 $("list").addEventListener("click",function(e){var d=e.target.getAttribute("data-d");if(d!==null){items.splice(+d,1);err("");upd()}});
-$("tabs").addEventListener("click",function(e){var k=e.target.getAttribute("data-k");if(k)show(k)});
-$("cmp").addEventListener("click",function(e){var k=e.target.getAttribute("data-k");if(k){show(k);$("tabs").scrollIntoView({behavior:"smooth",block:"center"})}});
+function pick(e){var b=e.target.closest("[data-k]");if(b){cur=b.getAttribute("data-k");render()}}
+$("cards").addEventListener("click",pick);$("det").addEventListener("click",pick);$("tb").addEventListener("click",pick);
 function load(a,c){items=a.map(function(x){var q=rp();return{n:x[0],w:x[1],v:x[2],x:q.x,y:q.y}});cap=c;$("cap").value=c;err("");upd()}
 $("s1").onclick=function(){load(SAMPLE,15)};
-$("s2").onclick=function(){var names=["Tent","Stove","Lamp","Rope","Radio","Map","Pot","Boots","Flask","Kit"],a=[],i;for(i=0;i<8;i++)a.push([names[i],1+Math.floor(Math.random()*9),1+Math.floor(Math.random()*20)]);load(a,20)};
+$("s2").onclick=function(){var nm=["Tent","Stove","Lamp","Rope","Radio","Map","Pot","Boots"],a=[];for(var i=0;i<8;i++)a.push([nm[i],1+Math.floor(Math.random()*9),1+Math.floor(Math.random()*20)]);load(a,20)};
 $("s3").onclick=function(){items=[];err("");upd()};
 var dg=-1;$("map").addEventListener("pointerdown",function(e){var t=e.target.closest("[data-i]");if(t){dg=+t.getAttribute("data-i");e.preventDefault()}});
-window.addEventListener("pointermove",function(e){if(dg<0)return;var r=$("map").getBoundingClientRect();items[dg].x=Math.max(.3,Math.min(9.7,(e.clientX-r.left)/r.width*10));items[dg].y=Math.max(.3,Math.min(6.7,(e.clientY-r.top)/r.height*7));drawMap(R[cur].ids)});
-window.addEventListener("pointerup",function(){if(dg<0)return;dg=-1;list()});
+window.addEventListener("pointermove",function(e){if(dg<0)return;var r=$("map").getBoundingClientRect(),px=(e.clientX-r.left)/r.width*640,py=(e.clientY-r.top)/r.height*448;items[dg].x=Math.max(.3,Math.min(9.7,(px-40)/54));items[dg].y=Math.max(.3,Math.min(6.7,(py-20)/54));var x=R[cur];x.tr=trip(x.ids);drawMap()});
+window.addEventListener("pointerup",function(){if(dg<0)return;dg=-1;solve()});
 load(SAMPLE,15);
 })();
 </script></body></html>
