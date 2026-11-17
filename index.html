@@ -1,7 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
+<html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0b1220">
 <title>Pack Smart — Knapsack Algorithm Explorer</title>
@@ -87,8 +85,7 @@ tr.r{cursor:pointer}tr.r:hover td,tr.r.s td{background:var(--gl)}
 .matter{background:linear-gradient(145deg,rgba(255,255,255,.07),rgba(255,255,255,.025));border:1px solid var(--ln);border-radius:24px;padding:22px;margin:0 0 18px}
 .matter ul{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;list-style:none;padding:0;margin:12px 0 0}
 .matter li{background:var(--gl);border-radius:14px;padding:12px 14px;margin:0}.matter li b{display:block;color:var(--g)}
-</style>
-</head>
+</style></head>
 <body><div class="w">
 <header><div class="logo">PACK <span>SMART</span></div><div class="pill">KNAPSACK ALGORITHM EXPLORER</div></header>
 <section class="hero"><div class="eye">A SMALL PROBLEM WITH BIG IDEAS</div><h1>Make every kilo <span>count.</span></h1><p>Add items and set a capacity to compare five approaches to the 0/1 knapsack problem. Each result shows exactly what the algorithm takes, what it leaves behind, and the pickup route on a map.</p></section>
@@ -113,13 +110,13 @@ tr.r{cursor:pointer}tr.r:hover td,tr.r.s td{background:var(--gl)}
 <div class="cards" id="cards"></div><p class="note" id="nt">The four exact methods should agree. Greedy is fast, but can miss the best combination.</p>
 <div class="det" id="det"></div></section>
 <section class="card" id="glance"><h2>Results at a glance</h2><p class="sub">Selected items and work performed by each method</p><div class="tw" id="tb"></div></section>
-<section class="card" id="route"><h2>Pickup route</h2><p class="sub" id="rs"></p><label class="ckl"><input type="checkbox" id="ov"> Overlay all five routes on the map</label><div class="mp"><svg id="map" viewBox="0 0 640 448" role="img" aria-label="Pickup route map"></svg><div><div class="km" id="kmv"></div><p class="sub">Round trip from the depot to packed items. Drag a pin to move it.</p><div class="chips"><span id="rsn"></span></div><p class="sub" id="rdsc"></p><b id="rt"></b></div></div><div class="rl" id="rl"></div></section>
+<section class="card" id="route"><h2>Pickup route</h2><p class="sub" id="rs"></p><label class="ckl"><input type="checkbox" id="ov"> Overlay all five routes on the map</label><div class="mp"><svg id="map" viewBox="0 0 640 448" role="img" aria-label="Pickup route map"></svg><div><div class="km" id="kmv"></div><p class="sub">Round trip from the depot to packed items. Drag a pin to move it.</p><b id="rt"></b></div></div><div class="rl" id="rl"></div></section>
 </div></div></div>
 <script>
 (function(){"use strict";
 var $=function(i){return document.getElementById(i)},items=[],cap=15,cur="dp",R={},DEP={x:5,y:3.5},MAXI=15,S=64,ORD=["brute","greedy","dp","bt","dc"],C={brute:"#72d6ff",greedy:"#ffbd75",dp:"#57e0b0",bt:"#c792ff",dc:"#ff8bb5"};
 var SAMPLE=[["Laptop",3,8],["Water",4,6],["Jacket",5,7],["Camera",2,5],["Food",3,6],["Book",2,3],["Tent",6,9],["First aid",1,4]];
-function esc(s){return s.replace(/[&<>\"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function esc(s){return s.replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
 function d2(a,b){return Math.hypot(a.x-b.x,a.y-b.y)}
 function rp(){return{x:.8+Math.random()*8.4,y:.8+Math.random()*5.4}}
 function err(m){$("err").textContent=m}
@@ -142,98 +139,19 @@ L.forEach(function(l){if(l.w>cap)return;var lo=0,hi=Rt.length-1,pos=-1;while(lo<
 if(pos<0)return;var r=Rt[pb[pos]];if(l.v+r.v>best){best=l.v+r.v;bl=l;br=r}});
 var ids=[],i;for(i=0;i<h;i++)if(bl.m>>i&1)ids.push(i);for(i=0;i<n-h;i++)if(br.m>>i&1)ids.push(h+i);return{ids:ids,work:(L.length+Rt.length)+" half-subsets",h:h,nl:L.length,nr:Rt.length,bl:bl.m,br:br.m,note:"Left half: "+h+" items ("+L.length+" subsets). Right half: "+(n-h)+" items ("+Rt.length+" subsets). That is far fewer than all "+(1<<n)+" combinations."}}
 var A={
-brute:{l:"Brute force",sh:"Brute force",t:"O(2ⁿ · n)",s:"O(n)",x:1,fn:brute,why:"Tries every possible combination. Always right, but each extra item doubles the work.",st:["List every subset of items (2ⁿ of them).","Add up the weight of each subset and discard those over the capacity.","Add up the value of the rest and remember the best so far.","After the last subset, return the best one."],rt:"opt",rn:"Shortest loop",rd:"Tests every visiting order and keeps the shortest round trip. It is never longer than the others."},
-greedy:{l:"Greedy",t:"O(n log n)",s:"O(n)",x:0,fn:greedy,why:"Very fast, but it never reconsiders a choice, so it can miss the best bag.",st:["Compute value ÷ weight for every item.","Sort items from best ratio to worst.","Walk down the list and take each item if it still fits.","Stop at the end of the list."],rt:"nn",rn:"Nearest next stop",rd:"Always drives to the closest unvisited pin. Quick, but the last leg home can be long."},
-dp:{l:"Dynamic programming",t:"O(n · W)",s:"O(n · W)",x:1,fn:dp,why:"Stores answers to smaller bags and reuses them, so it is exact and fast for moderate capacity W.",st:["Build a table: row i = first i items, column c = capacity c.","Each cell = best of: skip item i, or take it (its value + the cell above at c − weight).","The bottom-right cell is the best total value.","Walk back up the table: if a cell differs from the one above, that item was taken."],rt:"cw",rn:"Clockwise sweep",rd:"Starts north of the depot and circles clockwise, visiting pins in order of angle."},
-bt:{l:"Backtracking",tl:"Backtracking + bound",t:"O(2ⁿ) worst case",s:"O(n)",x:1,fn:bt,why:"Searches take / skip choices but prunes any branch that cannot beat the best bag found.",st:["Sort items by value ÷ weight.","Go item by item: take it (if it fits) or skip it.","Estimate the best value still reachable using fractions of the remaining items.","If the estimate cannot beat the best bag so far, prune the branch and go back.","When all items are decided, keep the best bag."],rt:"ccw",rn:"Counter-clockwise sweep",rd:"Circles the depot the other way, so the trip heads west first."},
-dc:{l:"Divide & conquer",tl:"Divide and conquer",t:"O(2^(n/2) · n)",s:"O(2^(n/2))",x:1,fn:dc,why:"Splits the items into two halves, solves each half, then merges. Exact, with far less work than brute force.",st:["Divide: split the items into a left half and a right half.","Conquer: list every subset of each half (only 2^(n/2) each).","Sort the right subsets by weight and keep the best value so far at each weight.","Merge: for each left subset, binary-search the heaviest right subset that still fits.","Keep the pair with the highest total value."],rt:"split",rn:"Two-zone route",rd:"Splits the map at the depot into west and east zones, finishes the west, then the east."}};
-function ang(p){return (Math.atan2(p.y-DEP.y,p.x-DEP.x)+Math.PI/2+2*Math.PI)%(2*Math.PI)}
-function clonePt(p){return{x:p.x,y:p.y,i:p.i}}
-function hk(P,dep){
-var pts=P.map(clonePt),n=pts.length;
-if(!n)return{seq:[{x:dep.x,y:dep.y,i:-1}],km:0};
-var maskAll=(1<<n)-1,INF=1e18,dp=Array.from({length:1<<n},function(){return new Array(n).fill(INF)}),prev=Array.from({length:1<<n},function(){return new Array(n).fill(-1)});
-for(var j=0;j<n;j++)dp[1<<j][j]=d2(dep,pts[j]);
-for(var mask=1;mask<1<<n;mask++){
-  for(j=0;j<n;j++){
-    if(!(mask&(1<<j)))continue;
-    if(mask===1<<j)continue;
-    var best=INF,bk=-1;
-    for(var k=0;k<n;k++){
-      if(k===j||!(mask&(1<<k)))continue;
-      var val=dp[mask ^ (1<<j)][k]+d2(pts[k],pts[j]);
-      if(val<best){best=val;bk=k;}
-    }
-    dp[mask][j]=best;prev[mask][j]=bk;
-  }
-}
-var end=-1,bestCost=INF;
-for(j=0;j<n;j++){
-  var val=dp[maskAll][j]+d2(pts[j],dep);
-  if(val<bestCost){bestCost=val;end=j;}
-}
-var order=[],mask=maskAll,j=end;
-while(mask){
-  order.push(j);
-  var p=prev[mask][j];
-  if(p<0)break;
-  mask^=(1<<j);j=p;
-}
-order.reverse();
-var seq=[{x:dep.x,y:dep.y,i:-1}];
-for(var i=0;i<order.length;i++){var p=pts[order[i]];seq.push({x:p.x,y:p.y,i:p.i});}
-seq.push({x:dep.x,y:dep.y,i:-1});
-var km=0;for(i=1;i<seq.length;i++)km+=d2(seq[i-1],seq[i]);
-return{seq:seq,km:km};
-}
-function trip(ids,mode){
-var dep={x:DEP.x,y:DEP.y,i:-1},pts=ids.map(function(i){return{x:items[i].x,y:items[i].y,i:i};}),seq=[],cur=dep,km=0;
-if(!pts.length){return{seq:[{x:dep.x,y:dep.y,i:-1}],km:0};}
-mode=mode||"nn";
-if(mode==="opt")return hk(pts,dep);
-if(mode==="cw"||mode==="ccw"){
-  pts=pts.slice().sort(function(a,b){return ang(a)-ang(b)});
-  if(mode==="ccw")pts=pts.reverse();
-  seq=[{x:dep.x,y:dep.y,i:-1}];
-  pts.forEach(function(p){seq.push({x:p.x,y:p.y,i:p.i});});
-  seq.push({x:dep.x,y:dep.y,i:-1});
-}
-else if(mode==="split"){
-  var west=pts.filter(function(p){return p.x<DEP.x;}),east=pts.filter(function(p){return p.x>=DEP.x;});
-  seq=[{x:dep.x,y:dep.y,i:-1}];
-  cur={x:dep.x,y:dep.y,i:-1};
-  function takeNext(list){
-    if(!list.length)return;
-    var best=0;
-    for(var j=1;j<list.length;j++)if(d2(cur,list[j])<d2(cur,list[best]))best=j;
-    var chosen=list.splice(best,1)[0];
-    seq.push({x:chosen.x,y:chosen.y,i:chosen.i});
-    cur={x:chosen.x,y:chosen.y,i:chosen.i};
-  }
-  while(west.length)takeNext(west);
-  while(east.length)takeNext(east);
-  seq.push({x:dep.x,y:dep.y,i:-1});
-}
-else{
-  seq=[{x:dep.x,y:dep.y,i:-1}];
-  while(pts.length){
-    var best=0;
-    for(var j=1;j<pts.length;j++)if(d2(cur,pts[j])<d2(cur,pts[best]))best=j;
-    var chosen=pts.splice(best,1)[0];
-    seq.push({x:chosen.x,y:chosen.y,i:chosen.i});
-    cur={x:chosen.x,y:chosen.y,i:chosen.i};
-  }
-  seq.push({x:dep.x,y:dep.y,i:-1});
-}
-for(var i=1;i<seq.length;i++)km+=d2(seq[i-1],seq[i]);
-return{seq:seq,km:km};
-}
+brute:{l:"Brute force",sh:"Brute force",t:"O(2ⁿ · n)",s:"O(n)",x:1,fn:brute,why:"Tries every possible combination. Always right, but each extra item doubles the work.",st:["List every subset of items (2ⁿ of them).","Add up the weight of each subset and discard those over the capacity.","Add up the value of the rest and remember the best so far.","After the last subset, return the best one."]},
+greedy:{l:"Greedy",t:"O(n log n)",s:"O(n)",x:0,fn:greedy,why:"Very fast, but it never reconsiders a choice, so it can miss the best bag.",st:["Compute value ÷ weight for every item.","Sort items from best ratio to worst.","Walk down the list and take each item if it still fits.","Stop at the end of the list."]},
+dp:{l:"Dynamic programming",t:"O(n · W)",s:"O(n · W)",x:1,fn:dp,why:"Stores answers to smaller bags and reuses them, so it is exact and fast for moderate capacity W.",st:["Build a table: row i = first i items, column c = capacity c.","Each cell = best of: skip item i, or take it (its value + the cell above at c − weight).","The bottom-right cell is the best total value.","Walk back up the table: if a cell differs from the one above, that item was taken."]},
+bt:{l:"Backtracking",tl:"Backtracking + bound",t:"O(2ⁿ) worst case",s:"O(n)",x:1,fn:bt,why:"Searches take / skip choices but prunes any branch that cannot beat the best bag found.",st:["Sort items by value ÷ weight.","Go item by item: take it (if it fits) or skip it.","Estimate the best value still reachable using fractions of the remaining items.","If the estimate cannot beat the best bag so far, prune the branch and go back.","When all items are decided, keep the best bag."]},
+dc:{l:"Divide & conquer",tl:"Divide and conquer",t:"O(2^(n/2) · n)",s:"O(2^(n/2))",x:1,fn:dc,why:"Splits the items into two halves, solves each half, then merges. Exact, with far less work than brute force.",st:["Divide: split the items into a left half and a right half.","Conquer: list every subset of each half (only 2^(n/2) each).","Sort the right subsets by weight and keep the best value so far at each weight.","Merge: for each left subset, binary-search the heaviest right subset that still fits.","Keep the pair with the highest total value."]}};
+function trip(ids){var left=ids.slice(),cu=DEP,seq=[DEP],km=0;while(left.length){var bi=0;for(var k=1;k<left.length;k++)if(d2(cu,items[left[k]])<d2(cu,items[left[bi]]))bi=k;var nx=left.splice(bi,1)[0];km+=d2(cu,items[nx]);cu=items[nx];seq.push(cu);seq[seq.length-1].i=nx}
+if(ids.length){km+=d2(cu,DEP);seq.push(DEP)}return{seq:seq,km:km}}
 function solve(){var ok=items.length>0&&cap>0;$("show").classList.toggle("off",!ok);$("glance").classList.toggle("off",!ok);$("route").classList.toggle("off",!ok);if(!ok)return;
-ORD.forEach(function(k){var t=performance.now(),x=A[k].fn();x.wn=parseInt(x.work,10)||1;x.ms=performance.now()-t;var q=tot(x.ids);x.w=q.w;x.v=q.v;x.tr=trip(x.ids,A[k].rt);R[k]=x});render()}
+ORD.forEach(function(k){var t=performance.now(),x=A[k].fn();x.wn=parseInt(x.work,10)||1;x.ms=performance.now()-t;var q=tot(x.ids);x.w=q.w;x.v=q.v;x.tr=trip(x.ids);R[k]=x});render()}
 function best(){return Math.max.apply(0,ORD.map(function(k){return R[k].v}))}
 function names(x){return x.ids.map(function(i){return items[i].n}).join(", ")||"Nothing fits"}
 function ul(ids){return ids.length?"<ul>"+ids.map(function(i){return"<li><b>"+esc(items[i].n)+"</b> — weight "+items[i].w+", value "+items[i].v+"</li>"}).join("")+"</ul>":'<div class="e">None</div>'}
-function bars(){var mx=Math.max.apply(0,ORD.map(function(k){return R[k].wn}));return'<div class="bars"><b>Work done (log scale): fewer steps is faster</b>'+ORD.map(function(k){var x=R[k],p=Math.max(4,Math.log(x.wn+1)/Math.log(mx+1)*100);return'<div class="bar"><span>'+A[k].l+'</span><span class="tr"><i style="width:'+p+'%"></i></span><span>'+x.work.split(" ")[0]+'</span></div>'}).join("")+"</div>"}
+function bars(){var mx=Math.max.apply(0,ORD.map(function(k){return R[k].wn}));return'<div class="bars"><b>Work done (log scale): fewer steps is faster</b>'+ORD.map(function(k){var x=R[k],p=Math.max(4,Math.log(x.wn+1)/Math.log(mx+1)*100);return'<div class="bar"><span>'+A[k].l+'</span><span class="tr"><i style="width:'+p+'%"></i></span><span>'+x.work.split(" ")[0]+'</span></div>'}).join("")+'</div>'}
 function gap(x){var o=R.dp.ids,a=x.ids.filter(function(i){return o.indexOf(i)<0}).map(function(i){return items[i].n}),c=o.filter(function(i){return x.ids.indexOf(i)<0}).map(function(i){return items[i].n});
 return"This is expected for a heuristic, not a bug: it locked in "+(a.join(", ")||"its choices")+" early, and that left no room for "+(c.join(", ")||"a better combination")+", which the best bag contains. A greedy method never undoes a choice."}
 function nmz(ids){return ids.map(function(i){return esc(items[i].n)}).join(", ")||"none"}
@@ -246,7 +164,7 @@ else if(k==="bt"){var tt=Math.pow(2,n+1)-1,p=Math.max(1,Math.round(x.nodes/tt*10
 else{var h=x.h,l=[],r=[];for(i=0;i<h;i++)l.push(i);for(i=h;i<n;i++)r.push(i);var cl=l.filter(function(i){return x.bl>>i&1}),cr=r.filter(function(i){return x.br>>(i-h)&1});
 o='<div class="cmpb"><div class="pickbox"><h3>Left half ('+x.nl+' subsets)</h3>'+nmz(l)+'<p class="note">Best part: '+nmz(cl)+'</p></div><div class="pickbox"><h3>Right half ('+x.nr+' subsets)</h3>'+nmz(r)+'<p class="note">Best part: '+nmz(cr)+'</p></div></div><p>Merged: left part + right part = the final bag.</p>'}
 return o}
-function ties(){var ex=["brute","dp","bt","dc"],u={};ex.forEach(function(k){u[R[k].ids.join(",")]=1});var m=Object.keys(u).length;return m>1?" The exact methods tie on value but picked "+m+" different bags, because each searches in its own order and breaks ties differently, so their pickup routes differ.":" Each method also uses its own pickup-route strategy, so trip distances differ even when the bag is the same."}
+function ties(){var ex=["brute","dp","bt","dc"],u={};ex.forEach(function(k){u[R[k].ids.join(",")]=1});var m=Object.keys(u).length;return m>1?" The exact methods tie on value but picked "+m+" different bags, because each searches in its own order and breaks ties differently, so their pickup routes differ.":" Try the “Tie demo” sample to see equal-value bags with different routes."}
 function kn(ex,c){var d=new Array(c+1).fill(0);items.forEach(function(it,i){if(i===ex)return;for(var j=c;j>=it.w;j--)d[j]=Math.max(d[j],d[j-it.w]+it.v)});return d[c]}
 function why(k){var x=R[k],opt=best(),on={};x.ids.forEach(function(i){on[i]=1});
 return'<div class="tw"><table class="wy"><tr><th>ITEM</th><th>W</th><th>V</th><th>V/W</th><th>DECISION</th><th>WHY</th></tr>'+items.map(function(it,i){var t=!!on[i],r,rt=(it.v/it.w).toFixed(2);
@@ -254,23 +172,25 @@ if(k==="greedy"){var g=x.trace[i];r=t?"Ranked #"+g.rank+" by value per weight. I
 else if(t){var w0=kn(i,cap),d=opt-w0;r=d>0?"Needed. Without it the best possible bag is worth only "+w0+" ("+d+" less than "+opt+").":"Interchangeable: an equally good bag (value "+opt+") exists without it."}
 else if(it.w>cap)r="Heavier than the whole bag ("+it.w+" > "+cap+").";
 else{var f=it.v+kn(i,cap-it.w),d2=opt-f;r=d2>0?"Not worth it. The best bag that includes it is worth only "+f+" ("+d2+" less than "+opt+"), because it uses space better spent on other items.":"A bag with it is equally good (value "+f+"), but this method chose another equally good bag."}
-return'<tr><td><b>'+esc(it.n)+'</b></td><td>'+it.w+'</td><td>'+it.v+'</td><td>'+rt+'</td><td><span class="bd '+(t?"t":"n")+'">'+(t?"Taken":"Not taken")+'</span></td><td>'+r+'</td></tr>'}).join("")+"</table></div>"}
+return'<tr><td><b>'+esc(it.n)+'</b></td><td>'+it.w+'</td><td>'+it.v+'</td><td>'+rt+'</td><td><span class="bd '+(t?"t":"n")+'">'+(t?"Taken":"Not taken")+'</span></td><td>'+r+'</td></tr>'}).join("")+'</table></div>'}
 function render(){var b=best();$("bv").textContent=b;var gv=R.greedy.v;$("nt").textContent=gv<b?"All four exact methods found "+b+". Greedy found "+gv+" ("+(b-gv)+" short): it is a fast heuristic that never undoes a choice, so it can miss the best combination.":"All five methods found "+b+" on this input. Greedy is a heuristic, so it will not always match on other inputs.";$("nt").textContent+=ties();
 $("cards").innerHTML=ORD.map(function(k){var a=A[k],x=R[k];return'<button class="ac'+(a.x?" ex":"")+'" data-k="'+k+'" style="border-top:5px solid '+C[k]+'" aria-pressed="'+(k===cur)+'"><h3>'+a.l+'</h3><div><div class="v">'+x.v+'</div><small>value · '+x.w+'/'+cap+' weight</small></div><span class="'+(a.x?"ok":"hu")+'">'+(a.x?"✓ Exact":"≈ Heuristic")+'</span></button>'}).join("");
 var a=A[cur],x=R[cur],pct=Math.round(x.w/cap*100);
-$("det").innerHTML='<div class="tabs" role="tablist" aria-label="Algorithms">'+ORD.map(function(k){return'<button role="tab" data-k="'+k+'" aria-selected="'+(k===cur)+'">'+(A[k].tl||A[k].l)+'</button>'}).join("")+'</div><h2>'+(a.tl||a.l)+'</h2><p>'+a.why+'</p><div class="chips"><span>Time: '+a.t+'</span><span>Space: '+a.s+'</span><span>'+(a.x?"Always optimal":"Not always optimal")+'</span></div><b>How it works</b><ol>'+a.st.map(function(s){return"<li>"+s+"</li>"}).join("")+'</ol><b>What this method looked at</b>'+viz(cur)+'<b>Result for your items</b><div class="big">Value '+x.v+'</div><div class="meter"><i style="width:'+pct+'%"></i></div><p class="note" style="margin:4px 0">Weight used: '+x.w+' of '+cap+' ('+pct+'%)</p><div class="bag">'+(x.ids.length?x.ids.map(function(i){return"<i>"+esc(items[i].n)+" · w"+items[i].w+" · v"+items[i].v+"</i>"}).join(""):"<i>Nothing fits</i>")+"</div><p style="font-weight:700;color:"+(x.v===b?"var(--g)":"var(--er)")+"">'+(x.v===b?"Matches the best value found.":(b-x.v)+" short of the best ("+b+"). "+gap(x))+'</p><p class="note">Work done: '+x.work+' · Run time: '+x.ms.toFixed(2)+' ms · Pickup trip: '+x.tr.km.toFixed(2)+' km ('+a.rn+')</p>'+(x.note?'<p class="note">'+x.note+'</p>':'')+'<div class="lists"><section class="pickbox"><h3 class="gd">✓ Taken ('+x.ids.length+')</h3>'+ul(x.ids)+'</section><section class="pickbox"><h3 class="wn">— Not taken ('+(items.length-x.ids.length)+')</h3>'+ul(items.map(function(_,i){return i}).filter(function(i){return x.ids.indexOf(i)<0}))+'</section></div><b>Why each item was taken or left out</b>'+why(cur);
-$("tb").innerHTML=bars()+'<table><tr><th>ALGORITHM</th><th>PICKED ITEMS</th><th>WEIGHT</th><th>VALUE</th><th>WORK</th><th>TRIP</th></tr>'+ORD.map(function(k){var y=R[k];return'<tr class="r'+(k===cur?" s":"")+'" data-k="'+k+'"><td><b>'+A[k].l+'</b></td><td>'+esc(names(y))+'</td><td>'+y.w+' / '+cap+'</td><td><b>'+y.v+'</b></td><td class="note">'+y.work+'</td><td>'+y.tr.km.toFixed(2)+' km</td></tr>'}).join("")+"</table>";
+$("det").innerHTML='<div class="tabs" role="tablist" aria-label="Algorithms">'+ORD.map(function(k){return'<button role="tab" data-k="'+k+'" aria-selected="'+(k===cur)+'">'+(A[k].tl||A[k].l)+'</button>'}).join("")+'</div><h2>'+(a.tl||a.l)+'</h2><p>'+a.why+'</p><div class="chips"><span>Time: '+a.t+'</span><span>Space: '+a.s+'</span><span>'+(a.x?"Always optimal":"Not always optimal")+'</span></div><b>How it works</b><ol>'+a.st.map(function(s){return"<li>"+s+"</li>"}).join("")+'</ol><b>What this method looked at</b>'+viz(cur)+'<b>Result for your items</b><div class="big">Value '+x.v+'</div><div class="meter"><i style="width:'+pct+'%"></i></div><p class="note" style="margin:4px 0">Weight used: '+x.w+' of '+cap+' ('+pct+'%)</p><div class="bag">'+(x.ids.length?x.ids.map(function(i){return"<i>"+esc(items[i].n)+" · w"+items[i].w+" · v"+items[i].v+"</i>"}).join(""):"<i>Nothing fits</i>")+'</div><p style="font-weight:700;color:'+(x.v===b?"var(--g)":"var(--er)")+'">'+(x.v===b?"Matches the best value found.":(b-x.v)+" short of the best ("+b+"). "+gap(x))+'</p><p class="note">Work done: '+x.work+' · Run time: '+x.ms.toFixed(2)+' ms · Pickup trip: '+x.tr.km.toFixed(2)+' km</p>'+(x.note?'<p class="note">'+x.note+'</p>':'')+'<div class="lists"><section class="pickbox"><h3 class="gd">✓ Taken ('+x.ids.length+')</h3>'+ul(x.ids)+'</section><section class="pickbox"><h3 class="wn">— Not taken ('+(items.length-x.ids.length)+')</h3>'+ul(items.map(function(_,i){return i}).filter(function(i){return x.ids.indexOf(i)<0}))+'</section></div><b>Why each item was taken or left out</b>'+why(cur);
+$("tb").innerHTML=bars()+'<table><tr><th>ALGORITHM</th><th>PICKED ITEMS</th><th>WEIGHT</th><th>VALUE</th><th>WORK</th><th>TRIP</th></tr>'+ORD.map(function(k){var y=R[k];return'<tr class="r'+(k===cur?" s":"")+'" data-k="'+k+'"><td><b>'+A[k].l+'</b></td><td>'+esc(names(y))+'</td><td>'+y.w+' / '+cap+'</td><td><b>'+y.v+'</b></td><td class="note">'+y.work+'</td><td>'+y.tr.km.toFixed(2)+' km</td></tr>'}).join("")+'</table>';
 drawMap()}
-function drawMap(){var x=R[cur];if(!x)return;var s='',i,a,b,sq=x.tr.seq,on={},od={};x.ids.forEach(function(i){on[i]=1});for(i=1;i<sq.length-1;i++)od[sq[i].i]=i;for(i=0;i<=10;i++)s+='<line x1="'+(40+i*54)+'" y1="20" x2="'+(40+i*54)+'" y2="398" stroke="var(--ln)"/>';
+function drawMap(){var x=R[cur];if(!x)return;var s='',i,a,b,sq=x.tr.seq,on={};x.ids.forEach(function(i){on[i]=1});
+for(i=0;i<=10;i++)s+='<line x1="'+(40+i*54)+'" y1="20" x2="'+(40+i*54)+'" y2="398" stroke="var(--ln)"/>';
 for(i=0;i<=7;i++)s+='<line x1="40" y1="'+(20+i*54)+'" x2="580" y2="'+(20+i*54)+'" stroke="var(--ln)"/>';
 function P(p){return[40+p.x*54,20+p.y*54]}
 s+='<text class="t" x="30" y="404">0 km</text><text class="t" x="590" y="414">10 km</text><text class="t" x="20" y="28">7 km</text>';
-if($("ov").checked)ORD.forEach(function(k){if(k===cur||!R[k])return;var q=R[k].tr.seq,d='';var o=(ORD.indexOf(k)-2)*3;q.forEach(function(p,j){var u=P(p);d+=(j?"L":"M")+u[0]+" "+u[1]});s+='<path d="'+d+'" fill="none" stroke="'+C[k]+'" stroke-width="2.5" stroke-dasharray="6 5" opacity=".8" transform="translate('+o+' '+o+')"/>'});
-for(i=1;i<sq.length;i++){a=P(sq[i-1]);b=P(sq[i]);var ax=(a[0]+b[0])/2,ay=(a[1]+b[1])/2,angDeg=Math.atan2(b[1]-a[1],b[0]-a[0])*180/Math.PI;var arrowX=a[0]+(b[0]-a[0])*0.62,arrowY=a[1]+(b[1]-a[1])*0.62;var labelX=a[0]+(b[0]-a[0])*0.35,labelY=a[1]+(b[1]-a[1])*0.35-7;s+='<line x1="'+a[0]+'" y1="'+a[1]+'" x2="'+b[0]+'" y2="'+b[1]+'" stroke="'+C[cur]+'" stroke-width="4" stroke-linecap="round"/><g transform="translate('+arrowX+' '+arrowY+') rotate('+angDeg+')"><polygon points="-8,-6 8,0 -8,6" fill="'+C[cur]+'" stroke="var(--bg)" stroke-width="1.2"/></g><text class="t" x="'+labelX+'" y="'+labelY+'">'+d2(sq[i-1],sq[i]).toFixed(1)+' km</text>'}
-items.forEach(function(t,j){var p=P(t),label=(on[j]?(od[j]||"·"):"·");s+='<g class="nd" data-i="'+j+'"><circle cx="'+p[0]+'" cy="'+p[1]+'" r="13" fill="'+(on[j]?"var(--g)":"#9aa59e")+'" opacity="'+(on[j]?1:.6)+'"/><text class="n" x="'+p[0]+'" y="'+(p[1]+4)+'">'+label+'</text><text class="t" x="'+p[0]+'" y="'+(p[1]-18)+'">'+esc(t.n)+'</text></g>'});
+if($("ov").checked)ORD.forEach(function(k){if(k===cur||!R[k])return;var q=R[k].tr.seq,d="";q.forEach(function(p,j){var u=P(p);d+=(j?"L":"M")+u[0]+" "+u[1]});s+='<path d="'+d+'" fill="none" stroke="'+C[k]+'" stroke-width="2.5" stroke-dasharray="6 5" opacity=".8"/>'});
+for(i=1;i<sq.length;i++){a=P(sq[i-1]);b=P(sq[i]);s+='<line x1="'+a[0]+'" y1="'+a[1]+'" x2="'+b[0]+'" y2="'+b[1]+'" stroke="'+C[cur]+'" stroke-width="4" stroke-linecap="round"/><text class="t" x="'+(a[0]+b[0])/2+'" y="'+((a[1]+b[1])/2-6)+'">'+d2(sq[i-1],sq[i]).toFixed(1)+' km</text>'}
+items.forEach(function(t,j){var p=P(t);s+='<g class="nd" data-i="'+j+'"><circle cx="'+p[0]+'" cy="'+p[1]+'" r="13" fill="'+(on[j]?"var(--g)":"#9aa59e")+'" opacity="'+(on[j]?1:.6)+'"/><text class="n" x="'+p[0]+'" y="'+(p[1]+4)+'">'+(j+1)+'</text><text class="t" x="'+p[0]+'" y="'+(p[1]-18)+'">'+esc(t.n)+'</text></g>'});
 a=P(DEP);s+='<rect x="'+(a[0]-13)+'" y="'+(a[1]-13)+'" width="26" height="26" rx="5" fill="var(--ink)"/><text class="n" style="fill:var(--bg)" x="'+a[0]+'" y="'+(a[1]+4)+'">D</text>';
-$("rl").innerHTML=ORD.map(function(k){var y=R[k];return'<div><i style="background:'+C[k]+'"></i><b>'+A[k].l+'</b><span>'+y.tr.km.toFixed(2)+' km · value '+y.v+' · '+A[k].rn+'</span><span>'+(y.ids.length?["Depot"].concat(y.tr.seq.slice(1,-1).map(function(p){return esc(items[p.i].n)}),["Depot"]).join(" → "):"no trip")+'</span></div>'}).join("");
-$("rs").textContent=A[cur].l+" solution · "+A[cur].rn+" route";$("rsn").textContent=A[cur].rn;$("rdsc").textContent=A[cur].rd;$("kmv").textContent=x.ids.length?x.tr.km.toFixed(2)+" km":"0 km";$("rt").textContent=x.ids.length?["Depot"].concat(sq.slice(1,-1).map(function(p){return items[p.i].n}),["Depot"]).join(" → "):"Nothing packed, no trip needed."}
+$("rl").innerHTML=ORD.map(function(k){var y=R[k];return'<div><i style="background:'+C[k]+'"></i><b>'+A[k].l+'</b><span>'+y.tr.km.toFixed(2)+' km · value '+y.v+'</span><span>'+(y.ids.length?["Depot"].concat(y.tr.seq.slice(1,-1).map(function(p){return esc(items[p.i].n)}),["Depot"]).join(" → "):"no trip")+'</span></div>'}).join("");
+$("map").innerHTML=s;$("rs").textContent="Nearest-neighbour route for the "+A[cur].l.toLowerCase()+" solution";$("kmv").textContent=x.ids.length?x.tr.km.toFixed(2)+" km":"0 km";
+$("rt").textContent=x.ids.length?["Depot"].concat(sq.slice(1,-1).map(function(p){return items[p.i].n}),["Depot"]).join(" → "):"Nothing packed, no trip needed."}
 function list(){$("cnt").textContent=items.length+"/"+MAXI+" items";$("list").innerHTML=items.map(function(t,i){return'<div class="it"><div><b>'+esc(t.n)+'</b><small>Weight '+t.w+' · Value '+t.v+'</small></div><button data-d="'+i+'" aria-label="Remove '+esc(t.n)+'">×</button></div>'}).join("")}
 function upd(){list();solve();if(!items.length)err("Add at least one item to see results.")}
 function int(s,lo,hi){s=String(s).trim();if(!/^\d+$/.test(s))return NaN;var v=Number(s);return v<lo||v>hi?NaN:v}
@@ -292,7 +212,7 @@ $("s4").onclick=function(){load([["Tent",10,60],["Stove",20,100],["Boots",30,120
 $("s5").onclick=function(){load([["Laptop",6,18],["Camera",4,11],["Tent",2,6],["Stove",5,14],["Jacket",1,3],["Book",1,4],["Food",3,11],["Lamp",6,18]],9)};
 $("s3").onclick=function(){items=[];err("");upd()};
 var dg=-1;$("map").addEventListener("pointerdown",function(e){var t=e.target.closest("[data-i]");if(t){dg=+t.getAttribute("data-i");e.preventDefault()}});
-window.addEventListener("pointermove",function(e){if(dg<0)return;var r=$("map").getBoundingClientRect(),px=(e.clientX-r.left)/r.width*640,py=(e.clientY-r.top)/r.height*448;items[dg].x=Math.max(.3,Math.min(9.7,(px-40)/54));items[dg].y=Math.max(.3,Math.min(6.7,(py-20)/54));var x=R[cur];x.tr=trip(x.ids,A[cur].rt);drawMap()});
+window.addEventListener("pointermove",function(e){if(dg<0)return;var r=$("map").getBoundingClientRect(),px=(e.clientX-r.left)/r.width*640,py=(e.clientY-r.top)/r.height*448;items[dg].x=Math.max(.3,Math.min(9.7,(px-40)/54));items[dg].y=Math.max(.3,Math.min(6.7,(py-20)/54));var x=R[cur];x.tr=trip(x.ids);drawMap()});
 window.addEventListener("pointerup",function(){if(dg<0)return;dg=-1;solve()});
 load(SAMPLE,15);
 })();
